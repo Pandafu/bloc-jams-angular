@@ -23,13 +23,13 @@
                 templateUrl: '/templates/album.html'
         })
             .state('collection', {
-                url: '/album',
-                templateUrl: '/templates/album.html'
+                url: '/collection',
+                templateUrl: '/templates/collection.html'
         });
         
     }
 
     angular
-        .module('blocJams', ['ui.router']); //1
+        .module('blocJams', ['ui.router']) //1
         .config(config); //2 config function to pass into the config function
 })();
