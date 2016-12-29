@@ -3,6 +3,7 @@
     2 Within the Fixtures function, we declare a variable and set it to an empty object.
     3 The factory will return this object and make its properties and methods available to other parts of our Angular application.
     4 POJO, components that inject this service as a dependency can access the public methods of the object, that is, the properties and methods that are return-ed.
+    5 This method should take one argument, numberOfAlbums, and return an array with the specified number of albumPicasso objects pushed to it.
 */
 
 (function() {
@@ -38,9 +39,17 @@
                  { title: 'Wrong phone number', duration: '2:15' }
              ]
          };
-        
+        //1st public method
         Fixtures.getAlbum = function() {
             return albumPicasso; //4
+        };
+        //2nd public method
+        Fixtures.getCollection = function(numberOfAlbums){
+            this.albums = [];
+            for (var a = 0; a < numberOfAlbums; a++){
+                    this.albums.push(angular.copy(albumPicasso));
+            }
+            return this.albums; //5
         };
         
         return Fixtures;

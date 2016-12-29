@@ -1,19 +1,16 @@
 /*
     1 We add an albums property and set its value to an empty array. 
-    2 Within the for loop, 
-    we use angular.copy to make copies of albumPicasso and push them to the array.
+    2 inject the Fixtures service into CollectionCtrl
+    3 Added 'Fixtures' with array 
 */
 
 (function () {
     
     function CollectionCtrl(){
-        this.albums = []; //1
-        for (var i = 0; i < 12; i++){
-            this.albums.push(angular.copy(albumPicasso));
-        }//2
-    }
+        this.albums = Fixtures.getCollection(12);
+    }//2
     
     angular
         .module('blocJams')
-        .controller('CollectionCtrl', CollectionCtrl);
+        .controller('CollectionCtrl', ['Fixtures', CollectionCtrl]); //3
 })();
