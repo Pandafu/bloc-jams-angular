@@ -5,6 +5,7 @@
     3 removed the currentBuzzObject variable declaration from the local scope of the play method because we anticipate needing to access this variable elsewhere in the service.
     4 Add a 2nd conditional statement that checks if currentSong is equal to song. If the user can trigger the play method on a song that is already set as the currentSong, then the assumption is that the song ust be paused. The conditional statement if(currentBuzzObject.isPaused()) is a check to make sure our assumption is correct.
     5 updates the boolean everytime we play,pause,or stop a song. 
+    6 Private functions: setSong, playSong. Private attributes: currentSong & currentBuzzObject. public methods: SongPlayer.play & SongPlayer.pause
 */
 
 (function() {
@@ -26,6 +27,11 @@
         
         var currentBuzzObject = null;
         
+        var playSong = function(song){
+                currentBuzzObject.play();
+                song.playing = true;
+        };
+        
         var setSong = function(song){
             if(currentBuzzObject){
                 currentBuzzObject.stop();
@@ -40,11 +46,11 @@
             currentSong = song;
         };
         
+        
         SongPlayer.play = function(song){
             if(currentSong !== song){
                 setSong(song); 
-                currentBuzzObject.play();
-                song.playing = true;
+                playSong(song);
             }else if(currentSong === song){
                     if(currentBuzzObject.isPaused()){
                        currentBuzzObject.play();
@@ -56,6 +62,7 @@
         SongPlayer.pause = function(song){
             currentBuzzObject.pause();
             song.playing = false;
+            
         };
         
         return SongPlayer;
