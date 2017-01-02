@@ -1,11 +1,23 @@
-<section class="player-bar">
+<!--
+    1 register PlayerBarCtrl for the player bar template
+    2 Update the template to clearly declare the play and pause buttons of the player bar in the view. 
+    3 to trigger the previous method, added an ng-click directive to the previous button anchor tag
+-->
+<section class="player-bar" ng-controller="PlayerBarCtrl as playerBar"> <!--1-->
     <div class="container">
         <div class="control-group main-controls">
-            <a class="previous">
+            <a class="previous" ng-click="playerBar.songPlayer.previous()"> <!-- 3 -->
                 <span class="ion-skip-backward"></span>
             </a>
             <a class="play-pause">
-                <span class="ion-play"></span>
+                <span class='ion-play'
+                    ng-show="!playerBar.songPlayer.currentSong.playing"
+                    ng-click="playerBar.songPlayer.play()">
+                </span><!--2-->
+                <span class='ion-pause'
+                      ng-show="playerBar.songPlayer.currentSong.playing"
+                      ng-click="playerBar.songPlayer.pause()">
+                </span><!--2-->
             </a>
             <a class="next">
                 <span class="ion-skip-forward"></span>
