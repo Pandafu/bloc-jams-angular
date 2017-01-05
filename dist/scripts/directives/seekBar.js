@@ -54,6 +54,10 @@ Comments for templates/directives/seek_bar.html since it causes error when place
                     return {width: percentString()};
                 };
                 
+                scope.thumbStyle = function(){
+                    return {left: percentString()};
+                };
+                
                 //2
                 scope.onClickSeekBar = function(event){
                     var percent = calculatePercent(seekBar, event);
