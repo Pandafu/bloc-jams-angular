@@ -69,6 +69,7 @@
         */
         SongPlayer.currentTime = null;
         
+        SongPlayer.volume = null;
         
 /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ 
         
@@ -131,6 +132,20 @@
               currentBuzzObject.setTime(time);
           }  
         };
+<<<<<<< HEAD
+=======
+        
+        /**
+        *@function setVolume
+        *@desc Set volume 
+        *@param {Number}
+        */
+        SongPlayer.setVolume = function(volume){
+            if(currentBuzzObject){
+                currentBuzzObject.setVolume(volume);
+            }
+        };
+>>>>>>> assignment-10Directives2
         return SongPlayer;
     };
  
