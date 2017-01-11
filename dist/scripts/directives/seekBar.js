@@ -9,6 +9,9 @@ scope.fillStyle() returns the width of the seek bar fill element based on the ca
   scope.onClickSeekBar() updates the seek bar value based on the seek bar's width and the location of the user's click on the seek bar. 
 3 when the user drags the seek bar thumb: scope.trackThumb() similar to scope.onClickSeekBar, but uses $apply to constantly apply the change in value of       scope.value as the user drags the seek bar thumb. 
 4 $document must be injected as a dependency for us to use it. 
+5 Observes the values of the attributes we declare in the HTML by specifying the attribute name in the first argument. When the observed attribute is set or changed, we execute a callback(the 2nd arument) that sets a new scope value (newValue) for the scope.value and scope.max attributes. We use the directive's scope to determine the location of the seek bar thumb, and correspondingly, the playback position of the song.
+6 We want the directive to evaluate the on-change expression to execute it, to make sure, we'll attach it to the directive's scope, rather than the attributes object. Scoping the attribute allows us the flexibilit to specify how we want to handle the value passed to the on-change attribute. The & in the isolate scope object is a type of directive scope binding-provides a way to execute an expression in the context of the parent scope.
+7 pass the updated value to the onChange attribute: write a function to call in the onClickSeekBar and trackThumb methods that will send the updated scope.value to the function evaluated by onChange. We named the function notifyOnChange because its purpose is to notify onChange that scope.value has changed.
 */
 
 /*
@@ -34,7 +37,9 @@ Comments for templates/directives/seek_bar.html since it causes error when place
             templateUrl: '/templates/directives/seek_bar.html',
             replace: true,
             restrict: 'E',
-            scope: {},
+            scope: {
+                onChange: '&'
+            }, //6
             link: function(scope, element, attributes){
                 //1
                 scope.value = 0;//default value 0
@@ -42,6 +47,15 @@ Comments for templates/directives/seek_bar.html since it causes error when place
                 
                 //2
                 var seekBar = $(element);
+                
+                //5
+                attributes.$observe('value', function(newValue) {
+                    scope.value = newValue;
+                });
+                //5
+                attributes.$observe('max', function(newValue){
+                    scope.max = newValue;
+                });
                 
                 var percentString = function(){
                     var value = scope.value;
@@ -62,6 +76,7 @@ Comments for templates/directives/seek_bar.html since it causes error when place
                 scope.onClickSeekBar = function(event){
                     var percent = calculatePercent(seekBar, event);
                     scope.value = percent * scope.max;
+                    notifyOnChange(scope.value);//7
                 };
                 //3
                 scope.trackThumb = function(){
@@ -69,13 +84,20 @@ Comments for templates/directives/seek_bar.html since it causes error when place
                         var percent = calculatePercent(seekBar, event);
                         scope.$apply(function(){
                             scope.value = percent * scope.max; 
-                        });
+                            notifyOnChange(scope.value);//7
+                        }); 
                     });
                     
                     $document.bind('mouseup.thumb', function(){
                         $document.unbind('mousemove.thumb');
                         $document.unbind('mouseup.thumb');
                     });
+                };
+            
+            var notifyOnChange = function(newValue) {
+                if(typeof scope.onChange === 'function'){
+                    scope.onChange({value: newValue});
+                    } 
                 };
             }
         };

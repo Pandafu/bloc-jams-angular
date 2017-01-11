@@ -1,23 +1,12 @@
 /*
-    1 Like the Fixtures service, within the SongPlayer service we create a variable and set it to an empty object. The service returns this object, making its properties and methods public to the rest of the application.
-    2 View a play button when we hover over a song row. Add a play method to the SongPlayer service so that we can play a song
-    Note: the play method takes an argument, song, which we'll get from the Album view when a user clicks the play button; the ngRepeat directive used in the Album view template will dictate which song to pass into the function. The play method creates a new Buzz object using the song's audioUrl property and then calls Buzz's own play method on the object. To trigger the play method, we need to add an ngClick directive to the play button ancho tag in album.html
-    3 removed the currentBuzzObject variable declaration from the local scope of the play method because we anticipate needing to access this variable elsewhere in the service.
-    4 Add a 2nd conditional statement that checks if currentSong is equal to song. If the user can trigger the play method on a song that is already set as the currentSong, then the assumption is that the song ust be paused. The conditional statement if(currentBuzzObject.isPaused()) is a check to make sure our assumption is correct.
-    5 updates the boolean everytime we play,pause,or stop a song. 
-    6 Private functions: setSong, playSong. Private attributes: currentSong & currentBuzzObject. public methods: SongPlayer.play & SongPlayer.pause
-    7 Moved here so we can use it within the player bar/maintain organization of private and public attributes/functions.
-    8 We use || to tell the function: 1 assign the value of song or 2 the value of SongPlayer.currentSong to the song variable. The first condition occurs when we call the methods from the Album view's song rows, and the second occurs when we call the methods from the player bar.
-    9 Inject the Fixtures service into the SongPlayer service. Then use the getAlbum method to store the album information. 
-    10 Now that we can access the album (#9), we can write a function to get the index of a song. 
-    11 Write a method to go to the previous song, used the getSongIndex function to get the index of the currently playing song and then decrease that index by one.
-    12 Added logic for what should happen if the previous song index is less than zero: stop the currently playing song and set the value of the currently playing song to the first song.  
-    13 if the currentSongIndex is not less than zero, then it must be greater than zero. Added an else conditional that moves to the previous song and automatically plays it. 
+    14 setCurrentTime method checks if there is a current Buzz object, and, if so, uses the Buzz library's setTime method to set the playback position in seconds. Like it says on the comment above it.
+    15 To update the song's playback progress from anywhere, we added a $rootScope.$apply event in the SongPlayer service. This creates a custom event that other parts of the Angular application can 'listen' to. The bind method adds an event listener to the Buzz sound object. 
+    
 */
 
 (function() {
-    function SongPlayer(Fixtures){
-        /* 9 */
+    function SongPlayer($rootScope, Fixtures){
+     
         var SongPlayer = {};
         
 /* Private Attributes */ /* Private Attributes */ /* Private Attributes */ /* Private Attributes */ /* Private Attributes */ /* Private Attributes */
@@ -28,7 +17,7 @@
         * @param {Object} song
         */
         
-        var currentAlbum = Fixtures.getAlbum(); /* 9 */
+        var currentAlbum = Fixtures.getAlbum(); 
         /*
         * @desc Buzz object audio file
         *@type {Object}
@@ -49,6 +38,12 @@
                 formats: ['mp3'],
                 preload: true
             });
+            
+            currentBuzzObject.bind('timeupdate', function(){
+                $rootScope.$apply(function() {
+                    SongPlayer.currentTime = currentBuzzObject.getTime();
+                });
+            }); //15
 
             SongPlayer.currentSong = song; 
            
@@ -62,18 +57,23 @@
         
         var getSongIndex = function(song){
             return currentAlbum.songs.indexOf(song);
-        }; /* 10 */
+        }; 
         
 /* Public Attributes */ /* Public Attributes */ /* Public Attributes */ /* Public Attributes */ /* Public Attributes */ /* Public Attributes */
 
-        SongPlayer.currentSong = null;//7
+        SongPlayer.currentSong = null;
         
+        /**
+        * @desc Current playback time (in seconds) of currently playing song
+        * @type {Number}
+        */
+        SongPlayer.currentTime = null;
         
         
 /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ 
         
         SongPlayer.play = function(song){
-            song = song || SongPlayer.currentSong; /* 8 */
+            song = song || SongPlayer.currentSong; 
             if(SongPlayer.currentSong !== song){
                 setSong(song); 
                 playSong(song);
@@ -86,7 +86,7 @@
         };
         
         SongPlayer.pause = function(song){
-            song = song || SongPlayer.currentSong; /* 8 */
+            song = song || SongPlayer.currentSong; 
             currentBuzzObject.pause();
             song.playing = false;
             
@@ -99,12 +99,12 @@
             if(currentSongIndex < 0) {
                 currentBuzzObject.stop();
                 SongPlayer.currentSong.playing = null;
-            } /* 12 */ else {
+            } else {
                 var song = currentAlbum.songs[currentSongIndex];
                 setSong(song);
                 playSong(song);
-            } /* 13 */
-        }; /* 11 */
+            } 
+        };
         
         SongPlayer.next = function(){
             var currentSongIndex = getSongIndex(SongPlayer.currentSong);
@@ -120,10 +120,21 @@
             }
         };
         
+        /**
+        * @function setCurrentTime
+        * @desc Set current time (in seconds) of currently playing song
+        * @param {Number} time
+        */
+        //14
+        SongPlayer.setCurrentTime = function(time){
+          if(currentBuzzObject){
+              currentBuzzObject.setTime(time);
+          }  
+        };
         return SongPlayer;
     };
  
     angular
         .module('blocJams')
-        .factory('SongPlayer', SongPlayer);
+        .factory('SongPlayer', ['$rootScope', 'Fixtures', SongPlayer]);
 })();

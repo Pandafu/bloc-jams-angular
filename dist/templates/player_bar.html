@@ -2,8 +2,12 @@
     1 register PlayerBarCtrl for the player bar template
     2 Update the template to clearly declare the play and pause buttons of the player bar in the view. 
     3 to trigger the previous method, added an ng-click directive to the previous button anchor tag
+    4 The 2nd expression, {{ playerBar.songPlayer.currentTime.duration }} will evaluate to the length of the currently playing song.
+    5 The 1st expression, {{ playerBar.songPlayer.currentTime }} 
+    6 attribute on-change takes an expression to execute when we change the value of the seek bar: we'll pass it a callback that sets the time of the song to correspond to the value of the seek bar.
+
 -->
-<section class="player-bar" ng-controller="PlayerBarCtrl as playerBar"> <!--1-->
+<section class="player-bar" ng-controller="PlayerBarCtrl as playerBar"> <!-- 1 -->
     <div class="container">
         <div class="control-group main-controls">
             <a class="previous" ng-click="playerBar.songPlayer.previous()"> <!-- 3 -->
@@ -13,11 +17,11 @@
                 <span class='ion-play'
                     ng-show="!playerBar.songPlayer.currentSong.playing"
                     ng-click="playerBar.songPlayer.play()">
-                </span><!--2-->
+                </span><!-- 2 -->
                 <span class='ion-pause'
                       ng-show="playerBar.songPlayer.currentSong.playing"
                       ng-click="playerBar.songPlayer.pause()">
-                </span><!--2-->
+                </span><!-- 2 -->
             </a>
             <a class="next" ng-click="playerBar.songPlayer.next()">
                 <span class="ion-skip-forward"></span>
@@ -28,7 +32,7 @@
             <h2 class="artist-song-mobile"></h2>
             <h3 class="artist-name"></h3>
             <div class="seek-control">
-                <seek-bar>
+                <seek-bar value="{{ playerBar.songPlayer.currentTime }}" max = "{{ playerBar.songPlayer.currentSong.duration }}" on-change= "playerBar.songPlayer.setCurrentTime(value)">
                 </seek-bar>
                 <div class="current-time"></div>
                 <div class="total-time"></div>
@@ -36,7 +40,7 @@
         </div>
         <div class="control-group volume">
             <span class="icon ion-volume-high"></span>
-            <seek-bar></seek-bar>
+            <seek-bar></seek-bar><!-- 6 -->
             </div>
         </div>
     </div>
