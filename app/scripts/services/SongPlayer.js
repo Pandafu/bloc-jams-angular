@@ -69,6 +69,7 @@
         */
         SongPlayer.currentTime = null;
         
+        SongPlayer.volume = null;
         
 /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ /* Public Methods*/ 
         
@@ -130,6 +131,12 @@
           if(currentBuzzObject){
               currentBuzzObject.setTime(time);
           }  
+        };
+        
+        SongPlayer.setVolume = function(volume){
+            if(currentBuzzObject){
+                currentBuzzObject.setVolume(volume);
+            }
         };
         return SongPlayer;
     };
