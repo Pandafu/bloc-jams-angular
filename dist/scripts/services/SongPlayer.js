@@ -133,6 +133,11 @@
           }  
         };
         
+        /**
+        *@function setVolume
+        *@desc Set volume 
+        *@param {Number}
+        */
         SongPlayer.setVolume = function(volume){
             if(currentBuzzObject){
                 currentBuzzObject.setVolume(volume);
