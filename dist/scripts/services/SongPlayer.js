@@ -132,8 +132,6 @@
               currentBuzzObject.setTime(time);
           }  
         };
-<<<<<<< HEAD
-=======
         
         /**
         *@function setVolume
@@ -145,7 +143,7 @@
                 currentBuzzObject.setVolume(volume);
             }
         };
->>>>>>> assignment-10Directives2
+
         return SongPlayer;
     };
  
